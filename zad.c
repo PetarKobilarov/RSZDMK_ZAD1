@@ -62,18 +62,91 @@ char ocitaj_taster()
   return taster;
 }
 
-void kontrola_kursora()
+void kontrola_kursora(char pov_Simb[4])
 {
 	lcd.cursor();
 	lcd.setCursor(0, 0);
 	//char taster = 0;
-	int h = 0, v = 0;//horizontalno, vrednost
-	char simbol[4] = {'P', 'K', 'H', 'T'};
+	int h = 0, v = 0, i;//horizontalno, vrednost
+	char simbol[4] = {'P', 'K', 'H', 'T'}, pom[4];
 	
 	do
 	{
-		
+		switch (ocitaj_taster())
+		{
+			case '2':
+				if (v == 3)
+				{
+					v = 0;
+					lcd.setCursor(h, 0);
+					lcd.write(simbol[v]);
+					lcd.setCursor(h, 0);
+                  	pom[h] = simbol[v];
+					_delay_ms(100);
+					//lcd.setCursor(h, v);
+				}else
+				{
+					v++;
+					lcd.setCursor(h, 0);
+					lcd.write(simbol[v]);
+					lcd.setCursor(h, 0);
+                 	pom[h] = simbol[v];
+					_delay_ms(100);
+				}
+				break;
+				
+			case '8':
+				if (v == 0)
+				{
+					v = 3;
+					lcd.setCursor(h, 0);
+					lcd.write(simbol[v]);
+					lcd.setCursor(h, 0);
+                  	pom[h] = simbol[v];
+					_delay_ms(100);
+				}else
+				{
+					v--;
+					lcd.setCursor(h, 0);
+					lcd.write(simbol[v]);
+					lcd.setCursor(h, 0);
+                  	pom[h] = simbol[v];
+					_delay_ms(100);
+				}
+				break;
+				
+			case '4':
+				if (h == 0)
+				{
+					h = 3;
+					lcd.setCursor(h, 0);
+					_delay_ms(100);
+				}else
+				{
+					h--;
+					lcd.setCursor(h, 0);
+					_delay_ms(100);
+				}
+				break;
+				
+			case '6':
+				if (h == 3)
+				{
+					h = 0;
+					lcd.setCursor(h, 0);
+					_delay_ms(100);
+				}else
+				{
+					h++;
+					lcd.setCursor(h, 0);
+					_delay_ms(100);
+				}
+				break;
+		}
 	}while (ocitaj_taster() != '5');
+	
+	for(i = 0; i < 4; i++)
+		pov_Simb[i] = pom[i];
 	
 }
 
@@ -82,13 +155,17 @@ int main()
 	lcd.begin(16, 2);
 	//srand(time(NULL));
 	
-	char taster = 0;
+	char taster = 0, rez;
+	char poc_Simb[4] = {'P', 'K', 'H', 'T'}, pov_Simb[4];
+	int i;
 	
 	while (1)
 	{
 		lcd.noCursor();
 		//lcd.createChar(0, pik);
 		while (ocitaj_taster() != '*');
+		
+		rez = 'D';
 		
 		lcd.setCursor(0, 0);//skroz levo
 		//lcd.write(rand(3));
@@ -111,12 +188,22 @@ int main()
 		lcd.setCursor(3, 0);
 		lcd.write('-');
 		
-		kontrola_kursora();
+		kontrola_kursora(pov_Simb);
 		
-		lcd.clear();
-		lcd.print("ok");
+		for (i = 0; i < 4; i++)
+		{
+			if (poc_Simb[i] != 	pov_Simb[i])
+				rez = 'N';
+		}
 		
+		for (i = 0; i < 4; i++)
+		{
+			lcd.setCursor(i, 1);
+			lcd.write(poc_Simb[i]);
+		}
 		
+		lcd.setCursor(15, 1);
+		lcd.write(rez);
 	}
 	
 	return 0;
