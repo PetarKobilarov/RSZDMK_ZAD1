@@ -3,9 +3,6 @@
 
 LiquidCrystal lcd(A0, A1, A2, A3, A4, A5);
 
-//char pik[3] = {0x6, 0x16, 0x6};
-
-
 char ocitaj_taster()
 {
   char taster = 0;
@@ -153,22 +150,45 @@ void kontrola_kursora(char pov_Simb[4])
 int main()
 {
 	lcd.begin(16, 2);
-	//srand(time(NULL));
 	
 	char taster = 0, rez;
-	char poc_Simb[4] = {'P', 'K', 'H', 'T'}, pov_Simb[4];
-	int i;
+	char poc_Simb[4], pov_Simb[4];
+	int i, pom;
+	uint32_t seed = 0;
 	
 	while (1)
 	{
-		lcd.noCursor();
-		//lcd.createChar(0, pik);
-		while (ocitaj_taster() != '*');
 		
+		while (ocitaj_taster() != '*')
+		{
+			seed++; 
+			randomSeed(seed);
+		}
+		
+		for (i = 0; i < 4; i++)
+		{
+			pom = rand() % 4;
+			switch (pom)
+			{
+				case 0:
+					poc_Simb[i] = 'P';	break;
+				
+				case 1:
+					poc_Simb[i] = 'K';	break;
+					
+				case 2:
+					poc_Simb[i] = 'H';	break;
+					
+				case 3:
+					poc_Simb[i] = 'T';	break;
+			}
+		}
+		
+		lcd.clear();
 		rez = 'D';
 		
-		lcd.setCursor(0, 0);//skroz levo
-		//lcd.write(rand(3));
+		lcd.noCursor();
+		lcd.setCursor(0, 0);
 		lcd.write('P');
 		lcd.setCursor(1, 0);
 		lcd.write('K');
@@ -176,10 +196,9 @@ int main()
 		lcd.write('H');
 		lcd.setCursor(3, 0);
 		lcd.write('T');
-		//_delay_ms(2000);
-		_delay_ms(500);
+		_delay_ms(2000);
 		lcd.clear();
-		lcd.setCursor(0, 0);//skroz levo
+		lcd.setCursor(0, 0);
 		lcd.write('-');
 		lcd.setCursor(1, 0);
 		lcd.write('-');
